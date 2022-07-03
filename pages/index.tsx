@@ -1,9 +1,122 @@
-import type { NextPage } from 'next'
+import { useState } from 'react'
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import type { NextPage } from 'next'
+
+type Person = {
+  firstName: string
+  lastName: string
+  age: number
+  visits: number
+  status: string
+  progress: number
+}
+
+const defaultData: Person[] = [
+  {
+    firstName: 'tanner',
+    lastName: 'linsley',
+    age: 24,
+    visits: 100,
+    status: 'In Relationship',
+    progress: 50,
+  },
+  {
+    firstName: 'tandy',
+    lastName: 'miller',
+    age: 40,
+    visits: 40,
+    status: 'Single',
+    progress: 80,
+  },
+  {
+    firstName: 'joe',
+    lastName: 'dirte',
+    age: 45,
+    visits: 20,
+    status: 'Complicated',
+    progress: 10,
+  },
+]
+
+const columns: ColumnDef<Person>[] = [
+  // {
+  //   header: 'Name',
+  //   columns: [
+  //     {
+  //       accessorKey: 'firstName',
+  //       cell: info => info.getValue(),
+  //     },
+  //     {
+  //       accessorFn: row => row.lastName,
+  //       id: 'lastName',
+  //       cell: info => info.getValue(),
+  //       header: () => <span>Last Name</span>,
+  //     },
+  //   ],
+  // },
+  {
+    header: 'firstName',
+    accessorKey: 'firstName'
+  },
+  {
+    header: 'lastName',
+    accessorKey: 'lastName'
+  },
+  // {
+  //   header: 'Info',
+  //   columns: [
+  //     {
+  //       accessorKey: 'age',
+  //       header: () => 'Age',
+  //     },
+  //     {
+  //       header: 'More Info',
+  //       columns: [
+  //         {
+  //           accessorKey: 'visits',
+  //           header: () => <span>Visits</span>,
+  //         },
+  //         {
+  //           accessorKey: 'status',
+  //           header: 'Status',
+  //         },
+  //         {
+  //           accessorKey: 'progress',
+  //           header: 'Profile Progress',
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
+  {
+    header: 'Age',
+    accessorKey: 'age'
+  },
+  {
+    header: 'Visits',
+    accessorKey: 'visits'
+  },
+  {
+    header: 'Status',
+    accessorKey: 'status'
+  },
+  {
+    header: () => <span>Profile Progress</span>,
+    accessorKey: 'progress'
+  }
+]
 
 const Home: NextPage = () => {
+  const [data, setData] = useState(() => [...defaultData]);
+
+  const table = useReactTable({
+    data: data,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel()
+  });
+
   return (
     <div className={styles.container}>
       <Head>
@@ -14,57 +127,38 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome to <a href="https://nextjs.org">Next.js!+TypeScript</a><br /> with TanStack Table
         </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <table>
+          <thead>
+            {table.getHeaderGroups().map(headers => (
+              <tr key={headers.id}>
+                {headers.headers.map(header => (
+                  <th key={header.id} className={styles.th}>
+                    {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map(row => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map(cell => (
+                  <td key={cell.id} className={styles.td}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   )
 }

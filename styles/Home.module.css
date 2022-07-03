@@ -114,3 +114,17 @@
     flex-direction: column;
   }
 }
+
+.th {
+  padding: 12px 20px;
+  border-bottom: solid 2px rgb(229, 231, 235);
+  background-color: rgb(243, 244, 246);
+  font-weight: 600;
+  color: rgb(75, 85, 99);
+}
+
+.td {
+  padding: 20px;
+  border-bottom: solid 1px rgb(229, 231, 235);
+  text-align: center
+}
